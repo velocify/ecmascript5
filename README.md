@@ -151,59 +151,33 @@ Other Style Guides
     someStack.push('abracadabra');
     ```
 
-  <a name="arrays--from"></a><a name="4.4"></a>
-  - [4.4](#arrays--from) To convert an array-like object to an array, use [Array.from](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/from).
-
-    ```javascript
-    var foo = document.querySelectorAll('.foo');
-    var nodes = Array.from(foo);
-    ```
-
   <a name="arrays--callback-return"></a><a name="4.5"></a>
   - [4.5](#arrays--callback-return) Use return statements in array method callbacks. It’s ok to omit the return if the function body consists of a single statement returning an expression without side effects, following [8.2](#arrows--implicit-return). eslint: [`array-callback-return`](http://eslint.org/docs/rules/array-callback-return)
 
     ```javascript
-    // good
-    [1, 2, 3].map((x) => {
-      var y = x + 1;
-      return x * y;
-    });
+    // bad
+    var indexMap = myArray.reduce(function(memo, item, index) {
+      memo[item] = index;
+    }, {});
 
     // good
-    [1, 2, 3].map(x => x + 1);
+    var indexMap = myArray.reduce(function(memo, item, index) {
+      memo[item] = index;
+      return memo;
+    }, {});
 
     // bad
-    var flat = {};
-    [[0, 1], [2, 3], [4, 5]].reduce((memo, item, index) => {
-      var flatten = memo.concat(item);
-      flat[index] = flatten;
-    });
-
-    // good
-    var flat = {};
-    [[0, 1], [2, 3], [4, 5]].reduce((memo, item, index) => {
-      var flatten = memo.concat(item);
-      flat[index] = flatten;
-      return flatten;
-    });
-
-    // bad
-    inbox.filter((msg) => {
-      var { subject, author } = msg;
-      if (subject === 'Mockingbird') {
-        return author === 'Harper Lee';
-      } else {
-        return false;
+    var foo = Array.from(nodes, function(node) {
+      if (node.tagName === "DIV") {
+        return true;
       }
     });
 
     // good
-    inbox.filter((msg) => {
-      var { subject, author } = msg;
-      if (subject === 'Mockingbird') {
-        return author === 'Harper Lee';
+    var foo = Array.from(nodes, function(node) {
+      if (node.tagName === "DIV") {
+        return true;
       }
-
       return false;
     });
     ```
@@ -1315,7 +1289,7 @@ Other Style Guides
     var foo = jsonData && jsonData.foo && jsonData.foo.bar && jsonData.foo.bar.baz && jsonData.foo.bar.baz.quux && jsonData.foo.bar.baz.quux.xyzzy;
 
     // bad
-    $.ajax({ method: 'POST', url: 'https://airbnb.com/', data: { name: 'John' } }).done(() => console.log('Congratulations!')).fail(() => console.log('You have failed this city.'));
+    $.ajax({ method: 'POST', url: 'https://airbnb.com/', data: { name: 'John' } }).done(function() { return console.log('Congratulations!'); }).fail(function() { return console.log('You have failed this city.'); });
 
     // good
     var foo = jsonData
@@ -1331,8 +1305,8 @@ Other Style Guides
       url: 'https://airbnb.com/',
       data: { name: 'John' },
     })
-      .done(() => console.log('Congratulations!'))
-      .fail(() => console.log('You have failed this city.'));
+      .done(function() { return console.log('Congratulations!'); })
+      .fail(function() { return console.log('You have failed this city.'); });
     ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -1491,7 +1465,7 @@ Other Style Guides
     }());
 
     // good, but legacy (guards against the function becoming an argument when two files with IIFEs are concatenated)
-    ;((() => {
+    ;((function() {
       var name = 'Skywalker';
       return name;
     })());
@@ -1668,7 +1642,7 @@ Other Style Guides
 
     // ...
 
-    $(this).on('listingUpdated', (e, listingId) => {
+    $(this).on('listingUpdated', function(e, listingId) {
       // do something with listingId
     });
     ```
@@ -1681,7 +1655,7 @@ Other Style Guides
 
     // ...
 
-    $(this).on('listingUpdated', (e, data) => {
+    $(this).on('listingUpdated', function(e, data) {
       // do something with data.listingId
     });
     ```
